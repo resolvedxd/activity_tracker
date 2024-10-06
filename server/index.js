@@ -2,13 +2,12 @@ const pg = require("pg");
 const express = require("express");
 const cors = require("cors");
 const app = express();
-const { formidable } = require("formidable");
 
-const config = {
-  token: "asd",
-};
+const config = require("./config.json");
+
 const client = new pg.Client({ database: "activity_tracker" });
 app.use(cors());
+app.use(express.json());
 
 async function add_log(
   time,
@@ -48,36 +47,29 @@ async function get_logs(amt) {
     );
     return res.rows;
   } catch (e) {
-    throw e;
+    console.error("error while querying DB", e);
   }
 }
 
 app.post("/add_activity", async (req, res) => {
-  if (config.token != req.headers.token) res.sendStatus(400);
+  if (!req.headers.token || config.token != req.headers.token) return res.sendStatus(400);
 
-  const form = formidable({});
-
-  form.parse(req, async (err, fields, files) => {
-    if (err) {
-      return res.sendStatus(500);
-    }
-
-    try {
-      await add_log(
-        fields.time,
-        fields.int,
-        fields.pl,
-        fields.lc,
-        fields.rc,
-        fields.mm,
-        fields.kp,
-      );
-    } catch (e) {
-      console.log(e);
-      return res.sendStatus(500);
-    }
-    res.sendStatus(200);
-  });
+  console.log(req.body);
+  try {
+    await add_log(
+      req.body.time,
+      req.body.int,
+      req.body.pl,
+      req.body.lc,
+      req.body.rc,
+      req.body.mm,
+      req.body.kp,
+    );
+  } catch (e) {
+    console.error("error while adding log",e);
+    return res.sendStatus(500);
+  }
+  res.sendStatus(200);
 });
 
 app.get("/get_activity", async (req, res) => {
@@ -97,5 +89,7 @@ app.get("/get_activity", async (req, res) => {
 (async () => {
   await client.connect();
 
-  app.listen(3030, () => {});
+  app.listen(3030, () => {
+    console.log("server started");
+  });
 })();
