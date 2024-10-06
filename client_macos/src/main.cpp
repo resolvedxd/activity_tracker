@@ -8,7 +8,7 @@
 #include <string>
 #include <thread>
 
-constexpr int POST_INTERVAL = 5;
+constexpr int POST_INTERVAL = 60;
 constexpr uint32_t DISPLAY_DPI[][2] = {{4251086178, 127}};
 constexpr char* SERVER_URL = (char*)"http://localhost:3030/add_activity";
 
@@ -57,10 +57,6 @@ bool update_displays() {
                         display_serial});
   }
 
-  for (auto display : displays) {
-    std::cout << "display " << std::to_string(display.display_serial) << " origin:" << display.origin.x << ","
-              << display.origin.y << " size:" << display.size.x << "," << display.size.y << std::endl;
-  }
   return true;
 };
 
@@ -161,9 +157,13 @@ void run_timer() {
         curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headers);
         curl_easy_setopt(curl, CURLOPT_POST, 1);
 
-        json_field fields[] = {{"time", std::to_string(std::time(0))}, {"int", std::to_string(POST_INTERVAL)},
-                               {"kp", std::to_string(keys_pressed)},   {"lc", std::to_string(left_clicks)},
-                               {"rc", std::to_string(right_clicks)},   {"mm", std::to_string(distance_moved * 2.54)}};
+        json_field fields[] = {{"time", std::to_string(std::time(0))},
+                               {"int", std::to_string(POST_INTERVAL)},
+                               {"kp", std::to_string(keys_pressed)},
+                               {"lc", std::to_string(left_clicks)},
+                               {"rc", std::to_string(right_clicks)},
+                               {"mm", std::to_string(distance_moved * 2.54)},
+                               {"pt", std::to_string(0)}};
         std::string data = json_serialize(fields, sizeof(fields) / sizeof(json_field));
         std::cout << data << "\n";
 
