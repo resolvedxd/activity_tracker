@@ -163,7 +163,7 @@ void run_timer() {
                                {"lc", std::to_string(left_clicks)},
                                {"rc", std::to_string(right_clicks)},
                                {"mm", std::to_string(distance_moved * 2.54)},
-                               {"pt", std::to_string(0)}};
+                               {"pl", std::to_string(0)}};
         std::string data = json_serialize(fields, sizeof(fields) / sizeof(json_field));
         std::cout << data << "\n";
 
