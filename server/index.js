@@ -5,7 +5,7 @@ const app = express();
 
 const config = require("./config.json");
 
-const client = new pg.Client({ database: "activity_tracker" });
+const client = new pg.Client({ database: "activity_tracker", user: config.postgres_user, password: config.postgres_password });
 app.use(cors());
 app.use(express.json());
 

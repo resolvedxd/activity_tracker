@@ -1,3 +1,5 @@
 {
-  "token": "asd"
+  "token": "asd",
+  "postgres_user": null,
+  "postgres_password": null,
 }
